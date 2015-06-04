@@ -1,0 +1,10 @@
+build/
+dist/
+nbproject/private/
+nbproject/private/
+cscope.*
+*tags*
+tags
+.backups/
+.dep.inc
+
