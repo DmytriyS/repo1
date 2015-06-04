@@ -101,7 +101,7 @@ public:
     }
 
 protected:
-    int sockfd;
+    const int sockfd;
     const int bufSize;
     const int statsPeriod;
 
@@ -122,10 +122,10 @@ private:
             if (writeN < 0) {
                 log("error: send() %s", strerror(errno));
                 break;
+            } else if (writeN != bufSize) {
+                log("error: send() written %d bytes", writeN);
+                break;
             }
-            //            if (writeN != bufSize) {
-            //                log("error: send()");
-            //            }
         }
         log("writer has stopped");
     };
@@ -142,12 +142,12 @@ private:
         long* lb = reinterpret_cast<long*> (buffer);
 
         while (true) {
-            auto readN = ::recv(sockfd, buffer, bufSize, 0);
+            auto readN = ::recv(sockfd, buffer, bufSize, MSG_WAITALL);
             if (readN > 0) {
-                //                if (bufSize != readN) {
-                //                    log("error: revc()");
-                //                    break;
-                //                }
+                if (bufSize != readN) {
+                    log("error: revc() read %d bytes", readN);
+                    break;
+                }
                 if (packetsN == statsPeriod) {
                     log("packet average lifespan: %10ld ms", ((totalNs / packetsN) / nsecinms));
                     packetsN = 0;
@@ -159,10 +159,10 @@ private:
 
             } else if (readN < 0) {
                 log("error: recv() %s", strerror((errno)));
-                return;
+                break;
             } else {
                 log("warn: no data. Connection closed?");
-                return;
+                break;
             }
         }
         log("reader has stopped");
@@ -228,14 +228,14 @@ int main(int argc, char** argv) {
     Writer w{sockfd, packetSize, statsPeriod};
     Reader r{sockfd, packetSize, statsPeriod};
 
-    auto wf = std::async(std::launch::async, Task::run, std::ref(w));
-    auto rf = std::async(std::launch::async, Task::run, std::ref(r));
-
     log("starting writer");
-    wf.get();
+    std::thread tw{Task::run, std::ref(w)};
 
     log("starting reader");
-    rf.get();
+    std::thread tr{Task::run, std::ref(r)};
+
+    tw.join();
+    tr.join();
 
     log("finished");
 
