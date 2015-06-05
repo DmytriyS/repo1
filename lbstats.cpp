@@ -14,6 +14,7 @@
 #include <vector>
 #include <thread>
 #include <future>
+#include <unistd.h>
 
 template <typename... ARGS>
 void log(const char* fmt, ARGS... args) {
@@ -119,6 +120,7 @@ private:
         long* lb = reinterpret_cast<long*> (buffer);
 
         while (true) {
+            ::usleep(100);
             *lb = time_ns();
             auto writeN = ::send(sockfd, buffer, bufSize, 0);
             if (writeN < 0) {
