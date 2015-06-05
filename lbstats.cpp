@@ -70,7 +70,7 @@ int openConnection(const std::string& host, const std::string& port) {
 
     int sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0) {
-        log("error: socket(): %1%", strerror(errno));
+        log("error: socket(): %s", strerror(errno));
         return r_error;
     }
 
