@@ -42,6 +42,7 @@
           <linkerLibItems>
             <linkerLibStdlibItem>PosixThreads</linkerLibStdlibItem>
           </linkerLibItems>
+          <commandLine>-lrt</commandLine>
         </linkerTool>
       </compileType>
       <item path="lbstats.cpp" ex="false" tool="1" flavor2="0">
@@ -72,6 +73,7 @@
           <linkerLibItems>
             <linkerLibStdlibItem>PosixThreads</linkerLibStdlibItem>
           </linkerLibItems>
+          <commandLine>-lrt</commandLine>
         </linkerTool>
       </compileType>
       <item path="lbstats.cpp" ex="false" tool="1" flavor2="0">

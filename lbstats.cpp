@@ -109,7 +109,9 @@ protected:
 };
 
 struct Writer : Task {
-    using Task::Task;
+
+    Writer(int sockfd, int packetSize, int statsPeriod) : Task(sockfd, packetSize, statsPeriod) {
+    }
 
 private:
 
@@ -132,7 +134,9 @@ private:
 };
 
 struct Reader : Task {
-    using Task::Task;
+
+    Reader(int sockfd, int packetSize, int statsPeriod) : Task(sockfd, packetSize, statsPeriod) {
+    }
 
 private:
 
