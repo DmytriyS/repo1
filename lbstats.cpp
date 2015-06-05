@@ -14,6 +14,7 @@
 #include <vector>
 #include <thread>
 #include <future>
+#include <unistd.h>
 
 template <typename... ARGS>
 void log(const char* fmt, ARGS... args) {
@@ -69,7 +70,7 @@ int openConnection(const std::string& host, const std::string& port) {
 
     int sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0) {
-        log("error: socket(): %1%", strerror(errno));
+        log("error: socket(): %s", strerror(errno));
         return r_error;
     }
 
@@ -117,6 +118,7 @@ private:
         long* lb = reinterpret_cast<long*> (buffer);
 
         while (true) {
+            ::usleep(100);
             *lb = time_ns();
             auto writeN = ::send(sockfd, buffer, bufSize, 0);
             if (writeN < 0) {
@@ -138,6 +140,7 @@ private:
 
     void runImpl() {
         constexpr long nsecinms = 1000000;
+        constexpr long nsecinus = 1000;
 
         long* lb = reinterpret_cast<long*> (buffer);
 
@@ -149,7 +152,7 @@ private:
                     break;
                 }
                 if (packetsN == statsPeriod) {
-                    log("packet average lifespan: %10ld ms", ((totalNs / packetsN) / nsecinms));
+                    log("packet average lifespan: %10ld us", ((totalNs / packetsN) / nsecinus));
                     packetsN = 0;
                     totalNs = 0;
                 }
