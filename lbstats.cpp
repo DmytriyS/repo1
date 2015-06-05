@@ -144,6 +144,7 @@ private:
 
     void runImpl() {
         constexpr long nsecinms = 1000000;
+        constexpr long nsecinus = 1000;
 
         long* lb = reinterpret_cast<long*> (buffer);
 
@@ -155,7 +156,7 @@ private:
                     break;
                 }
                 if (packetsN == statsPeriod) {
-                    log("packet average lifespan: %10ld ms", ((totalNs / packetsN) / nsecinms));
+                    log("packet average lifespan: %10ld us", ((totalNs / packetsN) / nsecinus));
                     packetsN = 0;
                     totalNs = 0;
                 }
